@@ -1,5 +1,8 @@
 # Exnowflake
 
+[![Build
+Status](https://www.travis-ci.org/pggalaviz/exnowflake.svg?branch=master)](https://www.travis-ci.org/pggalaviz/exnowflake)
+
 Exnowflake is an Elixir application used to generate decentralized, unique, time based IDs. It's inspired on Twitter's Snowflake.
 
 ## Description
