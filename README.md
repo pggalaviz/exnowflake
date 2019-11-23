@@ -149,10 +149,10 @@ Then in your schema you can configure the ID autogeneration:
 
 ```elixir
 defmodule MyApp.User do
-	# ...
-    @primary_key {:id, MyApp.Types.Exnowflake, autogenerate: true}
-    alias MyApp.Types.Exnowflake
-   # ...
+# ...
+  @primary_key {:id, MyApp.Types.Exnowflake, autogenerate: true}
+  alias MyApp.Types.Exnowflake
+# ...
 end
 ```
 ### Absinthe
