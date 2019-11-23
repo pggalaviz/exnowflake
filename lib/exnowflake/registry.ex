@@ -62,7 +62,7 @@ defmodule Exnowflake.Registry do
 
     # Validate Node name for production environment.
     if Mix.env() == :prod && (node_name in [nil, :nonode@nohost]) do
-      Logger.warn("[exnowflake]: A unique node name must be provided, received: #{node_name}")
+      raise RuntimeError, "[exnowflake]: A unique node name must be provided, received: #{node_name}"
     end
 
     # Create registry ETS
