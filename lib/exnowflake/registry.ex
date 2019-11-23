@@ -147,22 +147,25 @@ defmodule Exnowflake.Registry do
 
   # Connect to each node or unregister it if unavailable.
   defp _connect_nodes(nodes) do
+    node = Kernel.node()
     for {name, time} <- nodes do
       atom_name = String.to_atom(name)
-      case Node.connect(atom_name) do
-        true ->
-          :ets.insert(@table, {atom_name, time})
-          nil
+      if atom_name != node do
+        case Node.connect(atom_name) do
+          true ->
+            :ets.insert(@table, {atom_name, time})
+            nil
 
-        false ->
-          _unregister(name, atom_name)
+          false ->
+            _unregister(name, atom_name)
 
-        _other ->
-          nil
+          _other ->
+            nil
+        end
+      else
+        :ets.insert(@table, {atom_name, time})
       end
     end
-  rescue
-    _ -> nil # OTP 21 throws exeption if attempting to connect to self()
   end
 
   # Unregister a node from Redis and local registry.

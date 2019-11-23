@@ -32,6 +32,6 @@ before_script:
   - mix deps.get
 
 script:
-  - epmd -daemon
   - mix test --trace
+  - epmd -daemon
   - mix test --include cluster
