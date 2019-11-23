@@ -61,8 +61,8 @@ defmodule Exnowflake.Registry do
     node_name = Kernel.node()
 
     # Validate Node name for production environment.
-    if @is_production && (node_name in [nil, :nonode@nohost]) do
-      raise RuntimeError, "[exnowflake][Registry]: A unique node name must be provided, received: #{node_name}"
+    if Mix.env() == :prod && (node_name in [nil, :nonode@nohost]) do
+      Logger.warn("[exnowflake]: A unique node name must be provided, received: #{node_name}")
     end
 
     # Create registry ETS
