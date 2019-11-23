@@ -34,6 +34,8 @@ defmodule Exnowflake.Supervisor do
         {Redix, Keyword.put(redis_opts, :name, :exnowflake)},
         Exnowflake.Registry
       ]
+    else
+      []
     end
   end
 end
