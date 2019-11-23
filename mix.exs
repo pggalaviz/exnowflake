@@ -56,7 +56,6 @@ defmodule Exnowflake.MixProject do
 
   defp docs do
     [
-      main: "README",
       source_ref: "v#{@version}",
       canonical: "http://hexdocs.pm/exnowflake",
       source_url: "https://github.com/pggalaviz/exnowflake",
