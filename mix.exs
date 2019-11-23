@@ -1,17 +1,17 @@
 defmodule Exnowflake.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
       app: :exnowflake,
       version: @version,
-      description: "Unique, time based ID generation inspired on Twitter's Snowflake.",
+      description: "Unique, time based ID generation inspired by Twitter's Snowflake.",
       package: package(),
       source_url: "https://github.com/pggalaviz/exnowflake",
       homepage_url: "https://github.com/pggalaviz/exnowflake",
-      elixir: "~> 1.7",
+      elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
@@ -56,7 +56,7 @@ defmodule Exnowflake.MixProject do
 
   defp docs do
     [
-      main: "Exnowflake",
+      main: "README",
       source_ref: "v#{@version}",
       canonical: "http://hexdocs.pm/exnowflake",
       source_url: "https://github.com/pggalaviz/exnowflake",
