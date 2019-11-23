@@ -21,6 +21,18 @@ The worker ID can be an arbitrary integer between 0-1023, optionally a **Redis**
 => Exnowflake.timestamp(id)
 1565636645355
 ```
+## Installation
+
+You can find **Exnowflake** in [Hex.pm](https://hex.pm/packages/exnowflake) and you can add it to your project dependencies:
+
+```elixir
+# mix.exs
+def deps do
+  [
+    {:exnowflake, "~> 0.1.0"}
+  ]
+end
+```
 
 ## Configuration
 
@@ -83,6 +95,114 @@ To get the current node worker ID, you can call:
 => Exnowflake.worker_id()
 0
 ```
+
+### Ecto
+
+If working with **Ecto**, you can create a custom type in order to autogenerate IDs:
+
+```elixir
+defmodule MyApp.Types.Exnowflake do
+  @moduledoc """
+  A custom Ecto type to generate Exnowflake IDs.
+  """
+  @behaviour Ecto.Type
+  require Logger
+
+  @type  t :: integer()
+
+  @doc """
+  Generates a new ID.
+  """
+  @spec generate() :: t()
+  def generate do
+    {:ok, id} = Exnowflake.generate()
+    id
+  rescue
+    exeption ->
+      Logger.error("Ecto type Exnowflake failed: #{inspect(exeption)}")
+  end
+
+  def autogenerate, do: generate()
+
+  @impl true
+  def type, do: :integer
+
+  @impl true
+  def cast(term) when is_integer(term), do: {:ok, term}
+  def cast(_), do: :error
+
+  @impl true
+  def dump(term) when is_integer(term), do: {:ok, term}
+  def dump(_), do: :error
+
+  @impl true
+  def load(term), do: {:ok, term}
+
+  @impl true
+  def equal?(term, term), do: true
+  def equal?(_, _), do: false
+end
+
+```
+
+Then in your schema you can configure the ID autogeneration:
+
+```elixir
+defmodule MyApp.User do
+	# ...
+    @primary_key {:id, MyApp.Types.Exnowflake, autogenerate: true}
+    alias MyApp.Types.Exnowflake
+   # ...
+end
+```
+### Absinthe
+
+When working with **Absinthe** (or any type of API for that matter), we should transform the **Integer** IDs to the **String** type. This because **JavaScript** does not support 64 bit integers and we'll get undesired behavior or errors.
+
+```elixir
+defmodule MyApp.Schema.ScalarTypes do
+  @moduledoc """
+  Custom Scalar types
+  """
+  use Absinthe.Schema.Notation
+
+  @desc """
+  `Exnowflake` type represents a 64 bit number, appears in JSON responses as a
+  UTF-8 String due to Javascript's lack of support for  numbers > 53-bits.
+  Its parsed again to an integer after received.
+  """
+  scalar :exnowflake, name: "Exnowflake" do
+    serialize(&Integer.to_string/1)
+    parse(&decode_exnowflake/1)
+  end
+
+
+  @spec decode_exnowflake(struct()) :: {:ok, integer()} | {:ok, nil} | :error
+  defp decode_exnowflake(%Absinthe.Blueprint.Input.String{value: value}) do
+    case Integer.parse(value) do
+      {int, _} -> {:ok, int}
+      _error -> :error
+    end
+  end
+  defp decode_exnowflake(%Absinthe.Blueprint.Input.Integer{value: value}), do: {:ok, value}
+  defp decode_exnowflake(%Absinthe.Blueprint.Input.Null{}), do: {:ok, nil}
+  defp decode_exnowflake(_), do: :error
+end
+
+```
+
+Now we can use the `:exnowflake` type for our IDs:
+
+```elixir
+# some schema query file
+@desc "Fetches a User"
+field :user, :user do
+  arg :id, non_null(:exnowflake)
+  resolve &MyApp.Users.get/2
+end
+```
+
+*** If not using **Absinthe** (eg. REST API), similar procedures are recomended on server requests & responses.
 
 ## Benchmarks
 
