@@ -23,6 +23,9 @@ jobs:
     - otp_release: 19.0
       elixir: 1.7
 
+service:
+    - redis-server
+
 install:
   - mix local.rebar --force
   - mix local.hex --force
