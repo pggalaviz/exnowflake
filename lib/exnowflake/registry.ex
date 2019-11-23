@@ -161,6 +161,8 @@ defmodule Exnowflake.Registry do
           nil
       end
     end
+  rescue
+    _ -> nil # OTP 21 throws exeption if attempting to connect to self()
   end
 
   # Unregister a node from Redis and local registry.
