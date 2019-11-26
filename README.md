@@ -1,7 +1,7 @@
 # Exnowflake
 
-[![Build
-Status](https://www.travis-ci.org/pggalaviz/exnowflake.svg?branch=master)](https://www.travis-ci.org/pggalaviz/exnowflake)
+[![Build Status](https://www.travis-ci.org/pggalaviz/exnowflake.svg?branch=master)](https://www.travis-ci.org/pggalaviz/exnowflake)
+[![Hex.pm](https://img.shields.io/hexpm/dt/exnowflake.svg)](https://hex.pm/packages/exnowflake)
 
 Exnowflake is an Elixir application used to generate decentralized, unique, time based IDs. It's inspired on Twitter's Snowflake.
 
@@ -13,7 +13,8 @@ This app generates 64 bit integers, based on a timestamp, worker ID and a sequen
 * worker - 10 bits (0 - 1023)
 * sequence - 12 bits (0 - 4095)
 
-The worker ID can be an arbitrary integer between 0-1023, optionally a **Redis** connection should be configured to register/unregister nodes in order to get the worker number.
+The worker ID can be an arbitrary integer between **0-1023** and can be assigned via configuration, optionally a **Redis** connection must be configured to auto register/unregister nodes in order to get the worker number.
+
 
 ### Example
 
@@ -24,6 +25,9 @@ The worker ID can be an arbitrary integer between 0-1023, optionally a **Redis**
 => Exnowflake.timestamp(id)
 1565636645355
 ```
+
+When using **Redis**, a local registry is called for ID generation, so we don't incurr in extra latency.
+
 ## Installation
 
 You can find **Exnowflake** in [Hex.pm](https://hex.pm/packages/exnowflake) and you can add it to your project dependencies:
@@ -44,10 +48,9 @@ Example:
 ```elixir
 config :exnowflake,
   worker_id: {:system, "WORKER_ID"}, # Must be an integer between 0-1023
-  epoch: 1234567890 # custom epoch in milliseconds
+  epoch: 1574787672858 # custom epoch in milliseconds
 ```
-
-##### *** Warning: if a custom `epoch` timestamp is given, it should not be reaplaced later or IDs overlap can occur.
+#### Warning: if a custom `epoch` timestamp is given, it should not be replaced later or IDs overlap can occur.
 
 If no `:worker_id` configuration option is given, **Exnowflake** will attempt to connect to **Redis** with the given defaults which you can override:
 
@@ -205,7 +208,7 @@ field :user, :user do
 end
 ```
 
-*** If not using **Absinthe** (eg. REST API), similar procedures are recomended on server requests & responses.
+If not using **Absinthe** (eg. REST API), similar procedures are recomended on server requests & responses.
 
 ## Benchmarks
 
